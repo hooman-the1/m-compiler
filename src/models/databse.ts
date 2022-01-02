@@ -1,6 +1,6 @@
 import Variables from "../variables/variables.js";
 import DB, { MongoClient } from 'mongodb';
-import { initDBConnect } from "../interfaces/interfaces.js";
+import { initDBConnect, adResult } from "../interfaces/interfaces.js";
 
 export default class Database{
 
@@ -18,13 +18,20 @@ export default class Database{
         this.MongoClient = DB.MongoClient;
     }
 
-    async getBrandAds(brandName: string){
+    async getBrandAds(brandName: string): Promise<adResult[]>{
         const brandCollections  = await this.getBrandCollections(brandName);
         const ads = await this.getAds(brandCollections);
+        return ads;
     }
 
-    private async getAds(brandCollections: string[]){
-        console.log(brandCollections);
+    private async getAds(brandCollections: string[]): Promise<adResult[]>{
+        const connect = await this.createConnect(this.adsDBName);
+        let ads: any[] = []
+        for(let i = 0; i < brandCollections.length; i ++ ){
+            ads = ads.concat(await connect.dbo.collection(brandCollections[i]).find({}).toArray());
+        }
+        connect.client.close();
+        return ads;
     }
 
     private async getBrandCollections(brandName: string): Promise<string[]>{
@@ -35,14 +42,14 @@ export default class Database{
         return brandCollections;
     }
 
-    private async returnBrandCollectionsFromAllCollections(brandName: string, allCollections: string[]): Promise<string[]>{
+    private async returnBrandCollectionsFromAllCollections(brandName: string, allCollections: any[]): Promise<string[]>{
         const brandCollections: string[] = [];
-        allCollections.forEach((element: any) => {
-            const collectionName = element.namespace.replace(this.adsDBName + '.','');
+        for(let i = 0; i < allCollections.length; i ++){
+            const collectionName = allCollections[i].namespace.replace(this.adsDBName + '.','');
             if(collectionName.replace(/[0-9]/g, '').includes(brandName)){
                 brandCollections.push(collectionName);
             }
-        });
+        }
         return brandCollections;
     }
 

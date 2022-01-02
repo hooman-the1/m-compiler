@@ -1,4 +1,20 @@
+import { ObjectId } from "mongodb";
+
 export interface initDBConnect{
     'client': any,
     'dbo': any
 }
+
+export interface adResult{
+    '_id': ObjectId,
+    'name': string,
+    'subName': string,
+    'prodYear': string,
+    'city': string,
+    'price': number,
+    'date': {
+        'pDate': string,  
+        'gDate': string
+    },
+    'collectionName': string 
+} 

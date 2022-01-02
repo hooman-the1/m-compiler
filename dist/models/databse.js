@@ -11,9 +11,16 @@ export default class Database {
     async getBrandAds(brandName) {
         const brandCollections = await this.getBrandCollections(brandName);
         const ads = await this.getAds(brandCollections);
+        return ads;
     }
     async getAds(brandCollections) {
-        console.log(brandCollections);
+        const connect = await this.createConnect(this.adsDBName);
+        let ads = [];
+        for (let i = 0; i < brandCollections.length; i++) {
+            ads = ads.concat(await connect.dbo.collection(brandCollections[i]).find({}).toArray());
+        }
+        connect.client.close();
+        return ads;
     }
     async getBrandCollections(brandName) {
         const connect = await this.createConnect(this.adsDBName);
@@ -24,12 +31,12 @@ export default class Database {
     }
     async returnBrandCollectionsFromAllCollections(brandName, allCollections) {
         const brandCollections = [];
-        allCollections.forEach((element) => {
-            const collectionName = element.namespace.replace(this.adsDBName + '.', '');
+        for (let i = 0; i < allCollections.length; i++) {
+            const collectionName = allCollections[i].namespace.replace(this.adsDBName + '.', '');
             if (collectionName.replace(/[0-9]/g, '').includes(brandName)) {
                 brandCollections.push(collectionName);
             }
-        });
+        }
         return brandCollections;
     }
     async createClient(dbName) {
