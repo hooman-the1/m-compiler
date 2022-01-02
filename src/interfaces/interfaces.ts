@@ -18,3 +18,10 @@ export interface adResult{
     },
     'collectionName': string 
 } 
+
+export interface CategorizedAdResult{
+    'collection': string,
+    'name': string,
+    'subName': string,
+    'ads': adResult[]
+}

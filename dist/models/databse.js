@@ -17,7 +17,14 @@ export default class Database {
         const connect = await this.createConnect(this.adsDBName);
         let ads = [];
         for (let i = 0; i < brandCollections.length; i++) {
-            ads = ads.concat(await connect.dbo.collection(brandCollections[i]).find({}).toArray());
+            let subNameAds = await connect.dbo.collection(brandCollections[i]).find({}).toArray();
+            let object = {
+                'collection': brandCollections[i],
+                'name': subNameAds[0].name,
+                'subName': subNameAds[0].subName,
+                'ads': subNameAds
+            };
+            ads.push(object);
         }
         connect.client.close();
         return ads;

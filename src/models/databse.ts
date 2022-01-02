@@ -1,6 +1,6 @@
 import Variables from "../variables/variables.js";
 import DB, { MongoClient } from 'mongodb';
-import { initDBConnect, adResult } from "../interfaces/interfaces.js";
+import { initDBConnect, CategorizedAdResult } from "../interfaces/interfaces.js";
 
 export default class Database{
 
@@ -18,17 +18,25 @@ export default class Database{
         this.MongoClient = DB.MongoClient;
     }
 
-    async getBrandAds(brandName: string): Promise<adResult[]>{
+    async getBrandAds(brandName: string): Promise<CategorizedAdResult[]>{
         const brandCollections  = await this.getBrandCollections(brandName);
         const ads = await this.getAds(brandCollections);
         return ads;
     }
 
-    private async getAds(brandCollections: string[]): Promise<adResult[]>{
+    private async getAds(brandCollections: string[]): Promise<CategorizedAdResult[]>{
         const connect = await this.createConnect(this.adsDBName);
         let ads: any[] = []
         for(let i = 0; i < brandCollections.length; i ++ ){
-            ads = ads.concat(await connect.dbo.collection(brandCollections[i]).find({}).toArray());
+            let subNameAds = await connect.dbo.collection(brandCollections[i]).find({}).toArray();
+            let object = {
+                'collection': brandCollections[i],
+                'name': subNameAds[0].name,
+                'subName': subNameAds[0].subName,
+                'ads': subNameAds
+            }
+            
+            ads.push(object);
         }
         connect.client.close();
         return ads;
