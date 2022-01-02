@@ -1,5 +1,5 @@
 import Variables from "../variables/variables.js";
-import DB from 'mongodb';
+import DB, { MongoClient } from 'mongodb';
 import { initDBConnect } from "../interfaces/interfaces.js";
 
 export default class Database{
@@ -19,13 +19,34 @@ export default class Database{
     }
 
     async getBrandAds(brandName: string){
-        const connect = await this.createConnect(this.adsDBName);
-        const ads = await connect.dbo.collection(brandName+'1').find({}).toArray();
-        console.log(ads);
-        connect.client.close();
+        const brandCollections  = await this.getBrandCollections(brandName);
+        const ads = await this.getAds(brandCollections);
     }
 
-    private async createClient(dbName: string){
+    private async getAds(brandCollections: string[]){
+        console.log(brandCollections);
+    }
+
+    private async getBrandCollections(brandName: string): Promise<string[]>{
+        const connect = await this.createConnect(this.adsDBName);
+        const allCollections: any[] = await connect.dbo.collections();
+        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+        connect.client.close();
+        return brandCollections;
+    }
+
+    private async returnBrandCollectionsFromAllCollections(brandName: string, allCollections: string[]): Promise<string[]>{
+        const brandCollections: string[] = [];
+        allCollections.forEach((element: any) => {
+            const collectionName = element.namespace.replace(this.adsDBName + '.','');
+            if(collectionName.replace(/[0-9]/g, '').includes(brandName)){
+                brandCollections.push(collectionName);
+            }
+        });
+        return brandCollections;
+    }
+
+    private async createClient(dbName: string): Promise<MongoClient>{
         const mongoClient = new this.MongoClient(this.mongoServer + dbName);
         mongoClient.connect();
         return mongoClient;
@@ -34,7 +55,7 @@ export default class Database{
     private async createConnect(dbName: string): Promise<initDBConnect>{
         const mongoClient = await this.createClient(dbName);
         const dbo = mongoClient.db(dbName);
-        return {
+       return  {
             'client': mongoClient,
             'dbo': dbo
         }

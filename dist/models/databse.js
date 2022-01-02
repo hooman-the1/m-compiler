@@ -9,10 +9,28 @@ export default class Database {
         this.MongoClient = DB.MongoClient;
     }
     async getBrandAds(brandName) {
+        const brandCollections = await this.getBrandCollections(brandName);
+        const ads = await this.getAds(brandCollections);
+    }
+    async getAds(brandCollections) {
+        console.log(brandCollections);
+    }
+    async getBrandCollections(brandName) {
         const connect = await this.createConnect(this.adsDBName);
-        const ads = await connect.dbo.collection(brandName + '1').find({}).toArray();
-        console.log(ads);
+        const allCollections = await connect.dbo.collections();
+        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
         connect.client.close();
+        return brandCollections;
+    }
+    async returnBrandCollectionsFromAllCollections(brandName, allCollections) {
+        const brandCollections = [];
+        allCollections.forEach((element) => {
+            const collectionName = element.namespace.replace(this.adsDBName + '.', '');
+            if (collectionName.replace(/[0-9]/g, '').includes(brandName)) {
+                brandCollections.push(collectionName);
+            }
+        });
+        return brandCollections;
     }
     async createClient(dbName) {
         const mongoClient = new this.MongoClient(this.mongoServer + dbName);
