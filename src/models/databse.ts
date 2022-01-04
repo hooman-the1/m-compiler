@@ -1,6 +1,7 @@
 import Variables from "../variables/variables.js";
 import DB, { MongoClient } from 'mongodb';
 import { initDBConnect, CategorizedAdResult } from "../interfaces/interfaces.js";
+import Logs from "./log-factory.js";
 
 export default class Database{
 
@@ -9,6 +10,7 @@ export default class Database{
     private mongoServer: string; 
     private adsDBName: string;
     private MongoClient;
+    private log;
 
     constructor(){
         this.variables = new Variables();
@@ -16,11 +18,12 @@ export default class Database{
         this.mongoServer = this.variables.mongoServer;
         this.adsDBName = this.variables.adsDBName;
         this.MongoClient = DB.MongoClient;
+        this.log = new Logs();
     }
 
     async getBrandAds(brandName: string): Promise<CategorizedAdResult[]>{
         const brandCollections  = await this.getBrandCollections(brandName);
-        const ads = await this.getAds(brandCollections);
+        const ads = await this.getAds(brandCollections!);
         return ads;
     }
 
@@ -28,7 +31,7 @@ export default class Database{
         const connect = await this.createConnect(this.adsDBName);
         let ads: any[] = []
         for(let i = 0; i < brandCollections.length; i ++ ){
-            let subNameAds = await connect.dbo.collection(brandCollections[i]).find({}).toArray();
+            let subNameAds = await connect!.dbo.collection(brandCollections[i]).find({}).toArray();
             let object = {
                 'collection': brandCollections[i],
                 'name': subNameAds[0].name,
@@ -38,16 +41,23 @@ export default class Database{
             
             ads.push(object);
         }
-        connect.client.close();
+        connect!.client.close();
         return ads;
     }
 
-    private async getBrandCollections(brandName: string): Promise<string[]>{
-        const connect = await this.createConnect(this.adsDBName);
-        const allCollections: any[] = await connect.dbo.collections();
-        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
-        connect.client.close();
-        return brandCollections;
+    private async getBrandCollections(brandName: string): Promise<string[] | undefined>{
+        try{
+            const connect = await this.createConnect(this.adsDBName);
+            await this.checkDatabase(this.adsDBName);
+            const allCollections: any[] = await connect!.dbo.collections();
+            const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+            connect!.client.close();
+            return brandCollections;
+        }catch(err: any){
+            console.log("brand error");
+            this.log.handleErrorLog(err);
+            console.log('some error in getting collections! see log file for more information')
+        }
     }
 
     private async returnBrandCollectionsFromAllCollections(brandName: string, allCollections: any[]): Promise<string[]>{
@@ -61,19 +71,47 @@ export default class Database{
         return brandCollections;
     }
 
-    private async createClient(dbName: string): Promise<MongoClient>{
-        const mongoClient = new this.MongoClient(this.mongoServer + dbName);
-        mongoClient.connect();
-        return mongoClient;
+    private async createClient(dbName: string): Promise<MongoClient | undefined>{
+        try{
+            const mongoClient = new this.MongoClient!(this.mongoServer + dbName);
+            await mongoClient.connect();
+            return mongoClient;
+        }catch(err: any){
+            this.log.handleErrorLog(err);
+            console.log('some error in getting access to MongoClient! see log file for more information');
+            process.exit();
+        }
     }
 
-    private async createConnect(dbName: string): Promise<initDBConnect>{
-        const mongoClient = await this.createClient(dbName);
-        const dbo = mongoClient.db(dbName);
-       return  {
-            'client': mongoClient,
-            'dbo': dbo
+    private async createConnect(dbName: string): Promise<initDBConnect | undefined>{
+        try{
+            const mongoClient = await this.createClient(dbName);
+            const dbo = mongoClient!.db(dbName);
+            return  {
+                'client': mongoClient,
+                'dbo': dbo
+            }
+        }catch(err: any){
+            this.log.handleErrorLog(err);
+            console.log('some error in getting access to Database! see log file for more information');
+            process.exit();
         }
+    }
+
+    private async checkDatabase(dbName: string){
+        const connect = await this.createConnect(this.adsDBName);
+        try{
+            const allCollections = await connect!.dbo.collections();
+            if(allCollections.length == 0){
+                throw new Error('the database is empty');
+            }
+            return;
+        }catch(err: any){
+            this.log.handleErrorLog(err);
+            console.log("some error in getting data from Database! see log file for more information")
+            process.exit();
+        }
+        
     }
 
 

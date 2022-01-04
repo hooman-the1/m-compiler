@@ -1,5 +1,6 @@
 import Variables from "../variables/variables.js";
 import DB from 'mongodb';
+import Logs from "./log-factory.js";
 export default class Database {
     constructor() {
         this.variables = new Variables();
@@ -7,6 +8,7 @@ export default class Database {
         this.mongoServer = this.variables.mongoServer;
         this.adsDBName = this.variables.adsDBName;
         this.MongoClient = DB.MongoClient;
+        this.log = new Logs();
     }
     async getBrandAds(brandName) {
         const brandCollections = await this.getBrandCollections(brandName);
@@ -30,11 +32,19 @@ export default class Database {
         return ads;
     }
     async getBrandCollections(brandName) {
-        const connect = await this.createConnect(this.adsDBName);
-        const allCollections = await connect.dbo.collections();
-        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
-        connect.client.close();
-        return brandCollections;
+        try {
+            const connect = await this.createConnect(this.adsDBName);
+            await this.checkDatabase(this.adsDBName);
+            const allCollections = await connect.dbo.collections();
+            const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+            connect.client.close();
+            return brandCollections;
+        }
+        catch (err) {
+            console.log("brand error");
+            this.log.handleErrorLog(err);
+            console.log('some error in getting collections! see log file for more information');
+        }
     }
     async returnBrandCollectionsFromAllCollections(brandName, allCollections) {
         const brandCollections = [];
@@ -47,16 +57,45 @@ export default class Database {
         return brandCollections;
     }
     async createClient(dbName) {
-        const mongoClient = new this.MongoClient(this.mongoServer + dbName);
-        mongoClient.connect();
-        return mongoClient;
+        try {
+            const mongoClient = new this.MongoClient(this.mongoServer + dbName);
+            await mongoClient.connect();
+            return mongoClient;
+        }
+        catch (err) {
+            this.log.handleErrorLog(err);
+            console.log('some error in getting access to MongoClient! see log file for more information');
+            process.exit();
+        }
     }
     async createConnect(dbName) {
-        const mongoClient = await this.createClient(dbName);
-        const dbo = mongoClient.db(dbName);
-        return {
-            'client': mongoClient,
-            'dbo': dbo
-        };
+        try {
+            const mongoClient = await this.createClient(dbName);
+            const dbo = mongoClient.db(dbName);
+            return {
+                'client': mongoClient,
+                'dbo': dbo
+            };
+        }
+        catch (err) {
+            this.log.handleErrorLog(err);
+            console.log('some error in getting access to Database! see log file for more information');
+            process.exit();
+        }
+    }
+    async checkDatabase(dbName) {
+        const connect = await this.createConnect(this.adsDBName);
+        try {
+            const allCollections = await connect.dbo.collections();
+            if (allCollections.length == 0) {
+                throw new Error('the database is empty');
+            }
+            return;
+        }
+        catch (err) {
+            this.log.handleErrorLog(err);
+            console.log("some error in getting data from Database! see log file for more information");
+            process.exit();
+        }
     }
 }

@@ -13,15 +13,11 @@ export default class ManualCompiler{
         const brandAds = await this.database.getBrandAds(brandName);
         const compiledBrandAds: any = []
         brandAds.forEach((subAds: CategorizedAdResult) => {
-            const prodYears = this.extractProdYear(subAds);
             const variants = this.adProdYearVariant(subAds);
             (subAds as any).variants = variants;
             compiledBrandAds.push(subAds);
         });
-        console.log(compiledBrandAds[2].collection);
-        console.log(compiledBrandAds[2].variants);
-        // const prodYears = this.extractProdYear(brandAds[0]);
-        // this.adProdYearVariant(brandAds[0]);
+        console.log(compiledBrandAds[0].variants);
     }
 
     private adProdYearVariant(subAds: CategorizedAdResult){
@@ -38,21 +34,26 @@ export default class ManualCompiler{
         return prodYears.filter(function (value, index, array) { 
             return array.indexOf(value) === index;
         });
-    } 
+    }
+    
+    private pricesOfEachYearToVariant(subAds: adResult[], prodYear: string){
+        const prices: number[] = [];
+        subAds.forEach((ad: adResult) => {
+            if(ad.prodYear == prodYear){
+                prices.push(ad.price);
+            }
+        })
+        return ({
+            'prodYear': prodYear,
+            'prices': prices
+        })
+    }
 
     private extractPricesOfEachYear(subAds: adResult[], prodYears: string[]){
         let variants: any[] = [];
         prodYears.forEach((prodYear: string) => {
-            const prices: number[] = [];
-            subAds.forEach((ad: adResult) => {
-                if(ad.prodYear == prodYear){
-                    prices.push(ad.price);
-                }
-            })
-            variants.push({
-                'prodYear': prodYear,
-                'prices': prices
-            })
+            const variant = this.pricesOfEachYearToVariant(subAds, prodYear);
+            variants.push(variant);
         });
         return variants;
     }
