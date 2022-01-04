@@ -1,5 +1,5 @@
 export default class Variables{
-    adsDBName = 'adsdsd';
+    adsDBName = 'ads';
     // adsDBName = 'ads';
     dbName = 'fch';
     // dbName = 'fch';

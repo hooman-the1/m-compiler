@@ -25,3 +25,17 @@ export interface CategorizedAdResult{
     'subName': string,
     'ads': adResult[]
 }
+
+export interface withVariants{
+    'collection': string,
+    'name': string,
+    'subName': string,
+    'ads': adResult[],
+    'variants': Variant[]
+}
+
+export interface Variant{
+    'prodYear': string,
+    'noOfAds': number,
+    'minPrice': number
+}

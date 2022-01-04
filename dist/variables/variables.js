@@ -1,6 +1,6 @@
 export default class Variables {
     constructor() {
-        this.adsDBName = 'adsdsd';
+        this.adsDBName = 'ads';
         // adsDBName = 'ads';
         this.dbName = 'fch';
         // dbName = 'fch';

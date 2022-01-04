@@ -32,19 +32,12 @@ export default class Database {
         return ads;
     }
     async getBrandCollections(brandName) {
-        try {
-            const connect = await this.createConnect(this.adsDBName);
-            await this.checkDatabase(this.adsDBName);
-            const allCollections = await connect.dbo.collections();
-            const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
-            connect.client.close();
-            return brandCollections;
-        }
-        catch (err) {
-            console.log("brand error");
-            this.log.handleErrorLog(err);
-            console.log('some error in getting collections! see log file for more information');
-        }
+        const connect = await this.createConnect(this.adsDBName);
+        await this.checkDatabase(this.adsDBName);
+        const allCollections = await connect.dbo.collections();
+        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+        connect.client.close();
+        return brandCollections;
     }
     async returnBrandCollectionsFromAllCollections(brandName, allCollections) {
         const brandCollections = [];

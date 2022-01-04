@@ -46,18 +46,12 @@ export default class Database{
     }
 
     private async getBrandCollections(brandName: string): Promise<string[] | undefined>{
-        try{
             const connect = await this.createConnect(this.adsDBName);
             await this.checkDatabase(this.adsDBName);
             const allCollections: any[] = await connect!.dbo.collections();
             const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
             connect!.client.close();
             return brandCollections;
-        }catch(err: any){
-            console.log("brand error");
-            this.log.handleErrorLog(err);
-            console.log('some error in getting collections! see log file for more information')
-        }
     }
 
     private async returnBrandCollectionsFromAllCollections(brandName: string, allCollections: any[]): Promise<string[]>{

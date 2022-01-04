@@ -1,24 +1,34 @@
 import { adResult, CategorizedAdResult } from "../interfaces/interfaces.js";
 import Database from "./databse.js";
+import Calculator from "./calculator.js";
 
 export default class ManualCompiler{
 
     private database;
+    private calculator;
 
     constructor(){
         this.database = new Database();
+        this.calculator = new Calculator();
     }
     
     async compile(brandName: string){
-        const brandAds = await this.database.getBrandAds(brandName);
-        const compiledBrandAds: any = []
+        let collections = await this.database.getBrandAds(brandName);
+        collections = this.adVariant(collections);
+        this.calculator.addMinPrice(collections);
+    }
+
+    private adVariant(brandAds: CategorizedAdResult[]){
+        const compiledBrandAds: any[] = []
         brandAds.forEach((subAds: CategorizedAdResult) => {
             const variants = this.adProdYearVariant(subAds);
             (subAds as any).variants = variants;
             compiledBrandAds.push(subAds);
         });
-        console.log(compiledBrandAds[0].variants);
+        return compiledBrandAds;
     }
+
+    
 
     private adProdYearVariant(subAds: CategorizedAdResult){
         const prodYears = this.extractProdYear(subAds);

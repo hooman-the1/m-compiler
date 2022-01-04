@@ -1,17 +1,23 @@
 import Database from "./databse.js";
+import Calculator from "./calculator.js";
 export default class ManualCompiler {
     constructor() {
         this.database = new Database();
+        this.calculator = new Calculator();
     }
     async compile(brandName) {
-        const brandAds = await this.database.getBrandAds(brandName);
+        let collections = await this.database.getBrandAds(brandName);
+        collections = this.adVariant(collections);
+        this.calculator.addMinPrice(collections);
+    }
+    adVariant(brandAds) {
         const compiledBrandAds = [];
         brandAds.forEach((subAds) => {
             const variants = this.adProdYearVariant(subAds);
             subAds.variants = variants;
             compiledBrandAds.push(subAds);
         });
-        console.log(compiledBrandAds[0].variants);
+        return compiledBrandAds;
     }
     adProdYearVariant(subAds) {
         const prodYears = this.extractProdYear(subAds);
