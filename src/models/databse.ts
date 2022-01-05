@@ -1,6 +1,6 @@
 import Variables from "../variables/variables.js";
 import DB, { MongoClient } from 'mongodb';
-import { initDBConnect, CategorizedAdResult } from "../interfaces/interfaces.js";
+import { initDBConnect, WithCategory } from "../interfaces/interfaces.js";
 import Catch from "./catch.js";
 
 export default class Database{
@@ -21,13 +21,13 @@ export default class Database{
         this.catch = new Catch();
     }
 
-    async getBrandAds(brandName: string): Promise<CategorizedAdResult[]>{
+    async getBrandAds(brandName: string): Promise<WithCategory[]>{
         const brandCollections  = await this.getBrandCollections(brandName);
         const ads = await this.getAds(brandCollections!);
         return ads;
     }
 
-    private async getAds(brandCollections: string[]): Promise<CategorizedAdResult[]>{
+    private async getAds(brandCollections: string[]): Promise<WithCategory[]>{
         const connect = await this.createConnect(this.adsDBName);
         let ads: any[] = []
         for(let i = 0; i < brandCollections.length; i ++ ){

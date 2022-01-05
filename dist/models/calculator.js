@@ -6,7 +6,7 @@ export default class Calculator {
             collection.variants.forEach((variant) => {
                 let prices = this.removeOutlierPrices(variant.prices);
                 let noOfAds = prices.length;
-                let minPrice = this.calculateMinPrice(prices);
+                let minPrice = Number(this.calculateMinPrice(prices).toPrecision(3));
                 variants.push({
                     'prodYear': variant.prodYear,
                     'noOfAds': noOfAds,

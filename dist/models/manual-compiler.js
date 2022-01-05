@@ -10,8 +10,11 @@ export default class ManualCompiler {
         collections = this.adVariant(collections);
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
-        console.log(collectionsWithVariants[2]);
-        return 1;
+        console.log(collectionsWithVariants[16]);
+        console.log(collectionsWithVariants[17]);
+        console.log(collectionsWithVariants[18]);
+        console.log(collectionsWithVariants[19]);
+        return collectionsWithVariants;
     }
     removeAdsDetails(collections) {
         const resultCollections = [];

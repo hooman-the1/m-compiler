@@ -1,4 +1,4 @@
-import { adResult, CategorizedAdResult, withVariants } from "../interfaces/interfaces.js";
+import { adFetch, WithCategory, withVariants } from "../interfaces/interfaces.js";
 import Database from "./databse.js";
 import Calculator from "./calculator.js";
 
@@ -17,8 +17,11 @@ export default class ManualCompiler{
         collections = this.adVariant(collections);
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
-        console.log(collectionsWithVariants[2]);
-        return 1;
+        console.log(collectionsWithVariants[16]);
+        console.log(collectionsWithVariants[17]);
+        console.log(collectionsWithVariants[18]);
+        console.log(collectionsWithVariants[19]);
+        return collectionsWithVariants;
     }
 
     private removeAdsDetails(collections: any[]){
@@ -30,9 +33,9 @@ export default class ManualCompiler{
         return resultCollections;
     }
 
-    private adVariant(brandAds: CategorizedAdResult[]){
+    private adVariant(brandAds: WithCategory[]){
         const compiledBrandAds: any[] = []
-        brandAds.forEach((subAds: CategorizedAdResult) => {
+        brandAds.forEach((subAds: WithCategory) => {
             const variants = this.adProdYearVariant(subAds);
             (subAds as any).variants = variants;
             compiledBrandAds.push(subAds);
@@ -42,15 +45,15 @@ export default class ManualCompiler{
 
     
 
-    private adProdYearVariant(subAds: CategorizedAdResult){
+    private adProdYearVariant(subAds: WithCategory){
         const prodYears = this.extractProdYear(subAds);
         const variants = this.extractPricesOfEachYear(subAds.ads, prodYears);
         return variants;
     }
 
-    private extractProdYear(subAds: CategorizedAdResult): string[]{
+    private extractProdYear(subAds: WithCategory): string[]{
         let prodYears: string[] = [];
-        subAds.ads.forEach((ad: adResult) => {
+        subAds.ads.forEach((ad: adFetch) => {
             prodYears.push(ad.prodYear);
         });
         return prodYears.filter(function (value, index, array) { 
@@ -58,9 +61,9 @@ export default class ManualCompiler{
         });
     }
     
-    private pricesOfEachYearToVariant(subAds: adResult[], prodYear: string){
+    private pricesOfEachYearToVariant(subAds: adFetch[], prodYear: string){
         const prices: number[] = [];
-        subAds.forEach((ad: adResult) => {
+        subAds.forEach((ad: adFetch) => {
             if(ad.prodYear == prodYear){
                 prices.push(ad.price);
             }
@@ -71,7 +74,7 @@ export default class ManualCompiler{
         })
     }
 
-    private extractPricesOfEachYear(subAds: adResult[], prodYears: string[]){
+    private extractPricesOfEachYear(subAds: adFetch[], prodYears: string[]){
         let variants: any[] = [];
         prodYears.forEach((prodYear: string) => {
             const variant = this.pricesOfEachYearToVariant(subAds, prodYear);

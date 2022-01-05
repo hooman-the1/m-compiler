@@ -5,7 +5,7 @@ export interface initDBConnect{
     'dbo': any
 }
 
-export interface adResult{
+export interface adFetch{
     '_id': ObjectId,
     'name': string,
     'subName': string,
@@ -19,18 +19,18 @@ export interface adResult{
     'collectionName': string 
 } 
 
-export interface CategorizedAdResult{
+export interface WithCategory{
     'collection': string,
     'name': string,
     'subName': string,
-    'ads': adResult[]
+    'ads': adFetch[]
 }
 
 export interface withVariants{
     'collection': string,
     'name': string,
     'subName': string,
-    'ads': adResult[],
+    'ads': adFetch[],
     'variants': Variant[]
 }
 
