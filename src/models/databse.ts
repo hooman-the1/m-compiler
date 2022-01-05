@@ -47,7 +47,7 @@ export default class Database{
 
     private async getBrandCollections(brandName: string): Promise<string[] | undefined>{
             const connect = await this.createConnect(this.adsDBName);
-            await this.checkDatabase(this.adsDBName);
+            await this.checkDatabase();
             const allCollections: any[] = await connect!.dbo.collections();
             const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
             connect!.client.close();
@@ -67,7 +67,7 @@ export default class Database{
 
     private async createClient(dbName: string): Promise<MongoClient | undefined>{
         try{
-            return this.tryCreateClient(dbName);
+            return await this.tryCreateClient(dbName);
         }catch(err: any){
             this.catch.deadCatch(err, 'some error in getting access to MongoClient! see log file for more information')
         }
@@ -83,7 +83,7 @@ export default class Database{
 
     private async createConnect(dbName: string): Promise<initDBConnect | undefined>{
         try{
-            return this.tryCreateConnect(dbName);
+            return await this.tryCreateConnect(dbName);
         }catch(err: any){
             this.catch.deadCatch(err, 'some error in getting access to Database! see log file for more information')
         }
@@ -98,18 +98,21 @@ export default class Database{
         }
     }
 
-    private async checkDatabase(dbName: string){
-        const connect = await this.createConnect(this.adsDBName);
+    private async checkDatabase(): Promise<void | undefined>{
         try{
-            const allCollections = await connect!.dbo.collections();
-            if(allCollections.length == 0){
-                throw new Error('the database is empty');
-            }
-            return;
+            return await this.tryCheckDatabase();
         }catch(err: any){
             this.catch.deadCatch(err, "some error in getting data from Database! see log file for more information")
+        }   
+    }
+
+    private async tryCheckDatabase(){
+        const connect = await this.createConnect(this.adsDBName);
+        const allCollections = await connect!.dbo.collections();
+        if(allCollections.length == 0){
+            throw new Error('the database is empty');
         }
-        
+        return;
     }
 
 

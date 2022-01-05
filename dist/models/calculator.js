@@ -7,13 +7,6 @@ export default class Calculator {
                 let prices = this.removeOutlierPrices(variant.prices);
                 let noOfAds = prices.length;
                 let minPrice = this.calculateMinPrice(prices);
-                // console.log('-------------------------');
-                // console.log(collection.name + collection.subName);
-                // console.log(variant.prodYear);
-                // console.log(noOfAds);
-                // console.log(prices);
-                // console.log(minPrice);
-                // console.log('-------------------------');
                 variants.push({
                     'prodYear': variant.prodYear,
                     'noOfAds': noOfAds,
@@ -23,7 +16,6 @@ export default class Calculator {
             collection.variants = variants;
             ads.push(collection);
         });
-        // console.log(ads[2]);
         return ads;
     }
     calculateMinPrice(prices) {

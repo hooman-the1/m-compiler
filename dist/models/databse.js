@@ -33,7 +33,7 @@ export default class Database {
     }
     async getBrandCollections(brandName) {
         const connect = await this.createConnect(this.adsDBName);
-        await this.checkDatabase(this.adsDBName);
+        await this.checkDatabase();
         const allCollections = await connect.dbo.collections();
         const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
         connect.client.close();
@@ -51,7 +51,7 @@ export default class Database {
     }
     async createClient(dbName) {
         try {
-            return this.tryCreateClient(dbName);
+            return await this.tryCreateClient(dbName);
         }
         catch (err) {
             this.catch.deadCatch(err, 'some error in getting access to MongoClient! see log file for more information');
@@ -64,7 +64,7 @@ export default class Database {
     }
     async createConnect(dbName) {
         try {
-            return this.tryCreateConnect(dbName);
+            return await this.tryCreateConnect(dbName);
         }
         catch (err) {
             this.catch.deadCatch(err, 'some error in getting access to Database! see log file for more information');
@@ -78,17 +78,20 @@ export default class Database {
             'dbo': dbo
         };
     }
-    async checkDatabase(dbName) {
-        const connect = await this.createConnect(this.adsDBName);
+    async checkDatabase() {
         try {
-            const allCollections = await connect.dbo.collections();
-            if (allCollections.length == 0) {
-                throw new Error('the database is empty');
-            }
-            return;
+            return await this.tryCheckDatabase();
         }
         catch (err) {
             this.catch.deadCatch(err, "some error in getting data from Database! see log file for more information");
         }
+    }
+    async tryCheckDatabase() {
+        const connect = await this.createConnect(this.adsDBName);
+        const allCollections = await connect.dbo.collections();
+        if (allCollections.length == 0) {
+            throw new Error('the database is empty');
+        }
+        return;
     }
 }
