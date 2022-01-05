@@ -1,6 +1,6 @@
-import { adFetch, WithCategory, withVariants } from "../interfaces/interfaces.js";
+import { adFetch, WithCategory } from "../interfaces/interfaces.js";
 import Database from "./databse.js";
-import Calculator from "./calculator.js";
+import Modification from "./modification.js";
 
 export default class ManualCompiler{
 
@@ -9,7 +9,7 @@ export default class ManualCompiler{
 
     constructor(){
         this.database = new Database();
-        this.calculator = new Calculator();
+        this.calculator = new Modification();
     }
     
     async compile(brandName: string){

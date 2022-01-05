@@ -1,9 +1,9 @@
 import Database from "./databse.js";
-import Calculator from "./calculator.js";
+import Modification from "./modification.js";
 export default class ManualCompiler {
     constructor() {
         this.database = new Database();
-        this.calculator = new Calculator();
+        this.calculator = new Modification();
     }
     async compile(brandName) {
         let collections = await this.database.getBrandAds(brandName);
