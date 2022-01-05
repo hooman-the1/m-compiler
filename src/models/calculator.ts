@@ -1,36 +1,57 @@
 import { Variant, withVariants } from "../interfaces/interfaces";
+import Variables from "../variables/variables.js";
 
 export default class Calculator{
+
+    private numberOfPrecisionDigits;
+    private variables;
+
+    constructor(){
+        this.variables = new Variables();
+        this.numberOfPrecisionDigits = this.variables.precisionDigits;
+    }
+
     addMinPrice(collections: any): withVariants[]{
         const ads: withVariants[] = []; 
         collections.forEach((collection: any) => {
-            let variants: Variant[] = [];
-            collection.variants.forEach((variant: any) => {
-                let prices = this.removeOutlierPrices(variant.prices);
-                let noOfAds = prices.length;
-                let minPrice = Number(this.calculateMinPrice(prices).toPrecision(3));
-                variants.push({
-                    'prodYear': variant.prodYear,
-                    'noOfAds': noOfAds,
-                    'minPrice': minPrice
-                });
-            });
-            collection.variants = variants;
-            ads.push(collection);
+            let newCollection = this.modifyCollectionVariants(collection);
+            ads.push(newCollection);
         });
         return ads;
     }
 
-    private calculateMinPrice(prices: number[]): number{
-        const minValue = eval(prices.join('+'))/prices.length
+    private modifyCollectionVariants(collection: any){
+        let variants: Variant[] = [];
+        collection.variants.forEach((variant: any) => {
+            let variantKeyValue = this.createVariantsKeyValue(variant);
+            variants.push(variantKeyValue);
+        });
+        collection.variants = variants;
+        return collection;
+    }
+
+    private createVariantsKeyValue(variant: any){
+        let prices = this.removeOutlierPrices(variant.prices);
+        let noOfAds = prices.length;
+        let minPrice = this.calculateMinPriceToSpecifiedPrecision(prices);
+        const keyValue = {
+            'prodYear': variant.prodYear,
+            'noOfAds': noOfAds,
+            'minPrice': minPrice
+        };
+        return keyValue;
+    }
+
+    private calculateMinPriceToSpecifiedPrecision(prices: number[]): number{
+        let minValue = eval(prices.join('+'))/prices.length;
+        minValue = Number(minValue.toPrecision(this.numberOfPrecisionDigits))
         return minValue;
     }
 
     private removeOutlierPrices(prices: number[]): number[]{
         const size = prices.length;
-
         let q1, q3;
-    
+
         if (size < 2) {
             return prices;
         }

@@ -5,4 +5,5 @@ export default class Variables{
     // dbName = 'fch';
     mongoServer = 'mongodb://localhost:27017/';
     logFileLocation = '../logs/logs.txt';
+    precisionDigits = 3;
 }

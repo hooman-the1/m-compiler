@@ -6,5 +6,6 @@ export default class Variables {
         // dbName = 'fch';
         this.mongoServer = 'mongodb://localhost:27017/';
         this.logFileLocation = '../logs/logs.txt';
+        this.precisionDigits = 3;
     }
 }

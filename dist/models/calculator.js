@@ -1,25 +1,40 @@
+import Variables from "../variables/variables.js";
 export default class Calculator {
+    constructor() {
+        this.variables = new Variables();
+        this.numberOfPrecisionDigits = this.variables.precisionDigits;
+    }
     addMinPrice(collections) {
         const ads = [];
         collections.forEach((collection) => {
-            let variants = [];
-            collection.variants.forEach((variant) => {
-                let prices = this.removeOutlierPrices(variant.prices);
-                let noOfAds = prices.length;
-                let minPrice = Number(this.calculateMinPrice(prices).toPrecision(3));
-                variants.push({
-                    'prodYear': variant.prodYear,
-                    'noOfAds': noOfAds,
-                    'minPrice': minPrice
-                });
-            });
-            collection.variants = variants;
-            ads.push(collection);
+            let newCollection = this.modifyCollectionVariants(collection);
+            ads.push(newCollection);
         });
         return ads;
     }
-    calculateMinPrice(prices) {
-        const minValue = eval(prices.join('+')) / prices.length;
+    modifyCollectionVariants(collection) {
+        let variants = [];
+        collection.variants.forEach((variant) => {
+            let variantKeyValue = this.createVariantsKeyValue(variant);
+            variants.push(variantKeyValue);
+        });
+        collection.variants = variants;
+        return collection;
+    }
+    createVariantsKeyValue(variant) {
+        let prices = this.removeOutlierPrices(variant.prices);
+        let noOfAds = prices.length;
+        let minPrice = this.calculateMinPriceToSpecifiedPrecision(prices);
+        const keyValue = {
+            'prodYear': variant.prodYear,
+            'noOfAds': noOfAds,
+            'minPrice': minPrice
+        };
+        return keyValue;
+    }
+    calculateMinPriceToSpecifiedPrecision(prices) {
+        let minValue = eval(prices.join('+')) / prices.length;
+        minValue = Number(minValue.toPrecision(this.numberOfPrecisionDigits));
         return minValue;
     }
     removeOutlierPrices(prices) {

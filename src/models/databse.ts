@@ -106,7 +106,7 @@ export default class Database{
         }   
     }
 
-    private async tryCheckDatabase(){
+    private async tryCheckDatabase(): Promise<void>{
         const connect = await this.createConnect(this.adsDBName);
         const allCollections = await connect!.dbo.collections();
         if(allCollections.length == 0){
