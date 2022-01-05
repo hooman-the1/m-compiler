@@ -1,7 +1,7 @@
 import { Variant, withVariants } from "../interfaces/interfaces";
 
 export default class Calculator{
-    addMinPrice(collections: any){
+    addMinPrice(collections: any): withVariants[]{
         const ads: withVariants[] = []; 
         collections.forEach((collection: any) => {
             let variants: Variant[] = [];
@@ -25,7 +25,8 @@ export default class Calculator{
             collection.variants = variants;
             ads.push(collection);
         });
-        console.log(ads[2]);
+        // console.log(ads[2]);
+        return ads;
     }
 
     private calculateMinPrice(prices: number[]): number{

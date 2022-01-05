@@ -1,4 +1,4 @@
-import { adResult, CategorizedAdResult } from "../interfaces/interfaces.js";
+import { adResult, CategorizedAdResult, withVariants } from "../interfaces/interfaces.js";
 import Database from "./databse.js";
 import Calculator from "./calculator.js";
 
@@ -15,7 +15,19 @@ export default class ManualCompiler{
     async compile(brandName: string){
         let collections = await this.database.getBrandAds(brandName);
         collections = this.adVariant(collections);
-        this.calculator.addMinPrice(collections);
+        let collectionsWithVariants = this.calculator.addMinPrice(collections);
+        collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
+        console.log(collectionsWithVariants[3]);
+        return 1;
+    }
+
+    private removeAdsDetails(collections: any[]){
+        const resultCollections: any[] = []
+        collections.forEach(collection => {
+            delete collection.ads;
+            resultCollections.push(collection);
+        });
+        return resultCollections;
     }
 
     private adVariant(brandAds: CategorizedAdResult[]){

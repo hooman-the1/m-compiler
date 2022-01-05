@@ -1,6 +1,6 @@
 import Variables from "../variables/variables.js";
 import DB from 'mongodb';
-import Logs from "./log-factory.js";
+import Catch from "./catch.js";
 export default class Database {
     constructor() {
         this.variables = new Variables();
@@ -8,7 +8,7 @@ export default class Database {
         this.mongoServer = this.variables.mongoServer;
         this.adsDBName = this.variables.adsDBName;
         this.MongoClient = DB.MongoClient;
-        this.log = new Logs();
+        this.catch = new Catch();
     }
     async getBrandAds(brandName) {
         const brandCollections = await this.getBrandCollections(brandName);
@@ -51,30 +51,32 @@ export default class Database {
     }
     async createClient(dbName) {
         try {
-            const mongoClient = new this.MongoClient(this.mongoServer + dbName);
-            await mongoClient.connect();
-            return mongoClient;
+            return this.tryCreateClient(dbName);
         }
         catch (err) {
-            this.log.handleErrorLog(err);
-            console.log('some error in getting access to MongoClient! see log file for more information');
-            process.exit();
+            this.catch.deadCatch(err, 'some error in getting access to MongoClient! see log file for more information');
         }
+    }
+    async tryCreateClient(dbName) {
+        const mongoClient = new this.MongoClient(this.mongoServer + dbName);
+        await mongoClient.connect();
+        return mongoClient;
     }
     async createConnect(dbName) {
         try {
-            const mongoClient = await this.createClient(dbName);
-            const dbo = mongoClient.db(dbName);
-            return {
-                'client': mongoClient,
-                'dbo': dbo
-            };
+            return this.tryCreateConnect(dbName);
         }
         catch (err) {
-            this.log.handleErrorLog(err);
-            console.log('some error in getting access to Database! see log file for more information');
-            process.exit();
+            this.catch.deadCatch(err, 'some error in getting access to Database! see log file for more information');
         }
+    }
+    async tryCreateConnect(dbName) {
+        const mongoClient = await this.createClient(dbName);
+        const dbo = mongoClient.db(dbName);
+        return {
+            'client': mongoClient,
+            'dbo': dbo
+        };
     }
     async checkDatabase(dbName) {
         const connect = await this.createConnect(this.adsDBName);
@@ -86,9 +88,7 @@ export default class Database {
             return;
         }
         catch (err) {
-            this.log.handleErrorLog(err);
-            console.log("some error in getting data from Database! see log file for more information");
-            process.exit();
+            this.catch.deadCatch(err, "some error in getting data from Database! see log file for more information");
         }
     }
 }

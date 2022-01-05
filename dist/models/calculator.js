@@ -23,7 +23,8 @@ export default class Calculator {
             collection.variants = variants;
             ads.push(collection);
         });
-        console.log(ads[2]);
+        // console.log(ads[2]);
+        return ads;
     }
     calculateMinPrice(prices) {
         const minValue = eval(prices.join('+')) / prices.length;

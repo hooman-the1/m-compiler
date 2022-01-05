@@ -8,7 +8,18 @@ export default class ManualCompiler {
     async compile(brandName) {
         let collections = await this.database.getBrandAds(brandName);
         collections = this.adVariant(collections);
-        this.calculator.addMinPrice(collections);
+        let collectionsWithVariants = this.calculator.addMinPrice(collections);
+        collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
+        console.log(collectionsWithVariants[3]);
+        return 1;
+    }
+    removeAdsDetails(collections) {
+        const resultCollections = [];
+        collections.forEach(collection => {
+            delete collection.ads;
+            resultCollections.push(collection);
+        });
+        return resultCollections;
     }
     adVariant(brandAds) {
         const compiledBrandAds = [];
