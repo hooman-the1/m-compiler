@@ -1,6 +1,6 @@
 import Variables from "../variables/variables.js";
 import DB, { MongoClient } from 'mongodb';
-import { initDBConnect, WithCategory } from "../interfaces/interfaces.js";
+import { Car, initDBConnect, WithCategory } from "../interfaces/interfaces.js";
 import Catch from "./catch.js";
 
 export default class Database{
@@ -11,15 +11,92 @@ export default class Database{
     private adsDBName: string;
     private MongoClient;
     private catch;
+    private carsDBName;
 
+    private carsSchema = {
+        bsonType: "object", 
+        required: ["_id", "name", "subName", "collectionName", "variants"],
+        properties: {
+            _id: {
+                bsonType: "objectId"
+            },
+            name: {
+                bsonType: "string",
+                description: "main name of car"
+            },
+            subName: {
+                bsonType: "string",
+                description: "sub name of car"
+            },
+            collectionName: {
+                bsonType: "string",
+                description: "collection name in ads database"
+            },
+            variants: {
+                bsonType: "array",
+                description: "prod years variants array",
+                minItems: 1,
+                items: {
+                    bsonType: "object"
+                }
+            } 
+        }
+    }
+    
     constructor(){
         this.variables = new Variables();
         this.dbName = this.variables.dbName;
+        this.carsDBName = this.variables.carsDBName;
         this.mongoServer = this.variables.mongoServer;
         this.adsDBName = this.variables.adsDBName;
         this.MongoClient = DB.MongoClient;
         this.catch = new Catch();
     }
+    
+    async insertCarsIntoDatabase(cars: Car[]){
+        const connect = await this.createConnect(this.carsDBName);
+        await this.createCollections(connect!.dbo, cars);
+        connect?.client.close();
+    }
+
+    private async insert(car: Car){
+        try{
+            await this.tryInsert(car);
+        }catch(err: any){
+            this.catch.aliveCatch(err, `some error in insert ${car.name} ${car.subName} record in ${car.collectionName} collection! see log file for more information`)
+        }
+    }
+
+    private async tryInsert(car: Car){
+
+    }
+
+    private async createCollections(dbo: any, cars: Car[]): Promise<void>{
+        for(let i = 0; i < cars.length; i++){
+            await this.createOneCollection(dbo, cars[i].collectionName);
+        }
+    }
+
+    private async createOneCollection(dbo: any, collectionName: string): Promise<string | undefined>{
+        try{
+            return await this.tryCreateOneCollection(dbo, collectionName);
+        }catch(err: any){
+            this.catch.deadCatch(err, `some error in create ${collectionName} collection in database! see log file for more information`)
+        }
+    }
+    
+    private async tryCreateOneCollection(dbo: any, collectionName: string): Promise<string>{
+        await dbo.createCollection(collectionName, {
+            validator: {
+                $jsonSchema: this.carsSchema
+                }
+            }
+        )
+        return collectionName;
+    }
+
+    
+    
 
     async getBrandAds(brandName: string): Promise<WithCategory[]>{
         const brandCollections  = await this.getBrandCollections(brandName);
@@ -33,7 +110,7 @@ export default class Database{
         for(let i = 0; i < brandCollections.length; i ++ ){
             let subNameAds = await connect!.dbo.collection(brandCollections[i]).find({}).toArray();
             let object = {
-                'collection': brandCollections[i],
+                'collectionName': brandCollections[i],
                 'name': subNameAds[0].name,
                 'subName': subNameAds[0].subName,
                 'ads': subNameAds
@@ -64,6 +141,7 @@ export default class Database{
         }
         return brandCollections;
     }
+
 
     private async createClient(dbName: string): Promise<MongoClient | undefined>{
         try{

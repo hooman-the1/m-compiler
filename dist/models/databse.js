@@ -3,12 +3,78 @@ import DB from 'mongodb';
 import Catch from "./catch.js";
 export default class Database {
     constructor() {
+        this.carsSchema = {
+            bsonType: "object",
+            required: ["_id", "name", "subName", "collectionName", "variants"],
+            properties: {
+                _id: {
+                    bsonType: "objectId"
+                },
+                name: {
+                    bsonType: "string",
+                    description: "main name of car"
+                },
+                subName: {
+                    bsonType: "string",
+                    description: "sub name of car"
+                },
+                collectionName: {
+                    bsonType: "string",
+                    description: "collection name in ads database"
+                },
+                variants: {
+                    bsonType: "array",
+                    description: "prod years variants array",
+                    minItems: 1,
+                    items: {
+                        bsonType: "object"
+                    }
+                }
+            }
+        };
         this.variables = new Variables();
         this.dbName = this.variables.dbName;
+        this.carsDBName = this.variables.carsDBName;
         this.mongoServer = this.variables.mongoServer;
         this.adsDBName = this.variables.adsDBName;
         this.MongoClient = DB.MongoClient;
         this.catch = new Catch();
+    }
+    async insertCarsIntoDatabase(cars) {
+        const connect = await this.createConnect(this.carsDBName);
+        await this.createCollections(connect.dbo, cars);
+        connect === null || connect === void 0 ? void 0 : connect.client.close();
+    }
+    async insert(car) {
+        try {
+            await this.tryInsert(car);
+        }
+        catch (err) {
+            this.catch.aliveCatch(err, `some error in insert ${car.name} ${car.subName} record in ${car.collectionName} collection! see log file for more information`);
+        }
+    }
+    async tryInsert(car) {
+    }
+    async createCollections(dbo, cars) {
+        for (let i = 0; i < cars.length; i++) {
+            await this.createOneCollection(dbo, cars[i].collectionName);
+        }
+    }
+    async createOneCollection(dbo, collectionName) {
+        try {
+            return await this.tryCreateOneCollection(dbo, collectionName);
+        }
+        catch (err) {
+            this.catch.deadCatch(err, `some error in create ${collectionName} collection in database! see log file for more information`);
+        }
+    }
+    async tryCreateOneCollection(dbo, collectionName) {
+        await dbo.createCollection(collectionName, {
+            validator: {
+                $jsonSchema: this.carsSchema
+            }
+        });
+        return collectionName;
     }
     async getBrandAds(brandName) {
         const brandCollections = await this.getBrandCollections(brandName);
@@ -21,7 +87,7 @@ export default class Database {
         for (let i = 0; i < brandCollections.length; i++) {
             let subNameAds = await connect.dbo.collection(brandCollections[i]).find({}).toArray();
             let object = {
-                'collection': brandCollections[i],
+                'collectionName': brandCollections[i],
                 'name': subNameAds[0].name,
                 'subName': subNameAds[0].subName,
                 'ads': subNameAds

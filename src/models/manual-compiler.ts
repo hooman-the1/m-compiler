@@ -1,4 +1,4 @@
-import { adFetch, WithCategory } from "../interfaces/interfaces.js";
+import { adFetch, Car, WithCategory } from "../interfaces/interfaces.js";
 import Database from "./databse.js";
 import Modification from "./modification.js";
 
@@ -12,15 +12,13 @@ export default class ManualCompiler{
         this.calculator = new Modification();
     }
     
-    async compile(brandName: string){
+    async compile(brandName: string): Promise<Car[]>{
         let collections = await this.database.getBrandAds(brandName);
         collections = this.adVariant(collections);
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
-        console.log(collectionsWithVariants[16]);
-        console.log(collectionsWithVariants[17]);
-        console.log(collectionsWithVariants[18]);
-        console.log(collectionsWithVariants[19]);
+        this.database.insertCarsIntoDatabase(collectionsWithVariants);
+        console.log(collectionsWithVariants[0]);
         return collectionsWithVariants;
     }
 

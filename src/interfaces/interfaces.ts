@@ -20,14 +20,14 @@ export interface adFetch{
 } 
 
 export interface WithCategory{
-    'collection': string,
+    'collectionName': string,
     'name': string,
     'subName': string,
     'ads': adFetch[]
 }
 
 export interface withVariants{
-    'collection': string,
+    'collectionName': string,
     'name': string,
     'subName': string,
     'ads': adFetch[],
@@ -39,3 +39,10 @@ export interface Variant{
     'noOfAds': number,
     'minPrice': number
 }
+
+export interface Car{
+    'collectionName': string,
+    'name': string,
+    'subName': string,
+    'variants': Variant[]
+} 
