@@ -55,7 +55,7 @@ export default class Database{
     
     async insertCarsIntoDatabase(cars: Car[]){
         const connect = await this.createConnect(this.carsDBName);
-        await this.createCollections(connect!.dbo, cars);
+        await this.createEmptyCollections(connect!.dbo, cars);
         await this.insertCars(connect!.dbo, cars)
         connect?.client.close();
     }
@@ -80,29 +80,49 @@ export default class Database{
         await dbo.collection(car.collectionName).insertOne(car);
     }
 
-    private async createCollections(dbo: any, cars: Car[]): Promise<void>{
+    private async createEmptyCollections(dbo: any, cars: Car[]): Promise<void>{
         for(let i = 0; i < cars.length; i++){
-            await this.createOneCollection(dbo, cars[i].collectionName);
+            const colExists = await (await dbo.listCollections().toArray()).findIndex((item: any) => item.name === cars[i].name) !== -1;
+            if(colExists){
+                await this.createOneEmptyCollection(dbo, cars[i].collectionName);
+            }else{
+                await this.clearCollection(dbo, cars[i].collectionName);
+            }
         }
         return;
     }
 
-    private async createOneCollection(dbo: any, collectionName: string): Promise<string | undefined>{
+    private async clearCollection(dbo: any, collectionName: string): Promise<void>{
         try{
-            return await this.tryCreateOneCollection(dbo, collectionName);
+            await this.tryClearCollection(dbo, collectionName);
         }catch(err: any){
-            this.catch.deadCatch(err, `some error in create ${collectionName} collection in database! see log file for more information`)
+            this.catch.aliveCatch(err, `some error in clearing ${collectionName} collection in database! see log file for more information`);
+        }
+    }
+
+    private async tryClearCollection(dbo: any, collectionName: string): Promise<void>{
+        await dbo.collection(collectionName).deleteMany({});
+    }
+
+    private async createOneEmptyCollection(dbo: any, collectionName: string): Promise<void | undefined>{
+        try{
+            return await this.tryCreateOneEmptyCollection(dbo, collectionName);
+        }catch(err: any){
+            this.catch.deadCatch(err, `some error in create ${collectionName} collection in database! see log file for more information`);
         }
     }
     
-    private async tryCreateOneCollection(dbo: any, collectionName: string): Promise<string>{
-        await dbo.createCollection(collectionName, {
-            validator: {
-                $jsonSchema: this.carsSchema
+    private async tryCreateOneEmptyCollection(dbo: any, collectionName: string): Promise<void>{
+        const colExists = (await dbo.listCollections().toArray()).findIndex((item: any) => item.name === collectionName) !== -1;
+        if(!colExists){
+            await dbo.createCollection(collectionName, {
+                validator: {
+                    $jsonSchema: this.carsSchema
+                    }
                 }
-            }
-        )
-        return collectionName;
+            )
+        }
+        return;
     }
 
     

@@ -42,7 +42,7 @@ export default class Database {
     }
     async insertCarsIntoDatabase(cars) {
         const connect = await this.createConnect(this.carsDBName);
-        await this.createCollections(connect.dbo, cars);
+        await this.createEmptyCollections(connect.dbo, cars);
         await this.insertCars(connect.dbo, cars);
         connect === null || connect === void 0 ? void 0 : connect.client.close();
     }
@@ -64,27 +64,47 @@ export default class Database {
     async tryInsert(dbo, car) {
         await dbo.collection(car.collectionName).insertOne(car);
     }
-    async createCollections(dbo, cars) {
+    async createEmptyCollections(dbo, cars) {
         for (let i = 0; i < cars.length; i++) {
-            await this.createOneCollection(dbo, cars[i].collectionName);
+            const colExists = await (await dbo.listCollections().toArray()).findIndex((item) => item.name === cars[i].name) !== -1;
+            if (colExists) {
+                await this.createOneEmptyCollection(dbo, cars[i].collectionName);
+            }
+            else {
+                await this.clearCollection(dbo, cars[i].collectionName);
+            }
         }
         return;
     }
-    async createOneCollection(dbo, collectionName) {
+    async clearCollection(dbo, collectionName) {
         try {
-            return await this.tryCreateOneCollection(dbo, collectionName);
+            await this.tryClearCollection(dbo, collectionName);
+        }
+        catch (err) {
+            this.catch.aliveCatch(err, `some error in clearing ${collectionName} collection in database! see log file for more information`);
+        }
+    }
+    async tryClearCollection(dbo, collectionName) {
+        await dbo.collection(collectionName).deleteMany({});
+    }
+    async createOneEmptyCollection(dbo, collectionName) {
+        try {
+            return await this.tryCreateOneEmptyCollection(dbo, collectionName);
         }
         catch (err) {
             this.catch.deadCatch(err, `some error in create ${collectionName} collection in database! see log file for more information`);
         }
     }
-    async tryCreateOneCollection(dbo, collectionName) {
-        await dbo.createCollection(collectionName, {
-            validator: {
-                $jsonSchema: this.carsSchema
-            }
-        });
-        return collectionName;
+    async tryCreateOneEmptyCollection(dbo, collectionName) {
+        const colExists = (await dbo.listCollections().toArray()).findIndex((item) => item.name === collectionName) !== -1;
+        if (!colExists) {
+            await dbo.createCollection(collectionName, {
+                validator: {
+                    $jsonSchema: this.carsSchema
+                }
+            });
+        }
+        return;
     }
     async getBrandAds(brandName) {
         const brandCollections = await this.getBrandCollections(brandName);
