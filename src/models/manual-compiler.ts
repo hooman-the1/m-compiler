@@ -1,24 +1,27 @@
 import { adFetch, Car, WithCategory } from "../interfaces/interfaces.js";
-import Database from "./databse.js";
+import Fetch from "./database-Fetch.js";
+import Insert from "./database-insert.js";
 import Modification from "./modification.js";
 
 export default class ManualCompiler{
 
-    private database;
     private calculator;
+    private fetch;
+    private insert;
 
     constructor(){
-        this.database = new Database();
         this.calculator = new Modification();
+        this.fetch = new Fetch()
+        this.insert = new Insert();
     }
     
     async compile(brandName: string): Promise<Car[]>{
-        let collections = await this.database.getBrandAds(brandName);
+        let collections = await this.fetch.getBrandAds(brandName);
         collections = this.adVariant(collections);
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
-        this.database.insertCarsIntoDatabase(collectionsWithVariants);
-        console.log(collectionsWithVariants[0]);
+        await this.insert.insertCarsIntoDatabase(collectionsWithVariants);
+        // console.log(collectionsWithVariants[0]);
         return collectionsWithVariants;
     }
 
