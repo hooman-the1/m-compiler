@@ -56,25 +56,35 @@ export default class Database{
     async insertCarsIntoDatabase(cars: Car[]){
         const connect = await this.createConnect(this.carsDBName);
         await this.createCollections(connect!.dbo, cars);
+        await this.insertCars(connect!.dbo, cars)
         connect?.client.close();
     }
 
-    private async insert(car: Car){
+    private async insertCars(dbo: any, cars: Car[]){
+        for(let i = 0; i < cars.length; i++){
+            await this.insertCar(dbo, cars[i]);
+        }
+        return;
+    }
+
+    private async insertCar(dbo: any, car: Car){
         try{
-            await this.tryInsert(car);
+            await this.tryInsert(dbo,car);
         }catch(err: any){
             this.catch.aliveCatch(err, `some error in insert ${car.name} ${car.subName} record in ${car.collectionName} collection! see log file for more information`)
         }
+        return;
     }
 
-    private async tryInsert(car: Car){
-
+    private async tryInsert(dbo: any, car: Car){
+        await dbo.collection(car.collectionName).insertOne(car);
     }
 
     private async createCollections(dbo: any, cars: Car[]): Promise<void>{
         for(let i = 0; i < cars.length; i++){
             await this.createOneCollection(dbo, cars[i].collectionName);
         }
+        return;
     }
 
     private async createOneCollection(dbo: any, collectionName: string): Promise<string | undefined>{
