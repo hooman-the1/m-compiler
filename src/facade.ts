@@ -9,7 +9,7 @@ export default class Facade{
     }
 
     autoCompile(){
-
+        this.state.runAutoCompile();
     }
 
     manualCompile(brandName: string){

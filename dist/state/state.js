@@ -1,9 +1,14 @@
-import ManualCompiler from "../models/manual-compiler.js";
+import SingleCompiler from "../models/single-brand-compiler.js";
+import AutoCompiler from "../models/auto-compiler.js";
 export default class State {
     constructor() {
-        this.manualCompiler = new ManualCompiler();
+        this.singleCompiler = new SingleCompiler();
+        this.autoCompiler = new AutoCompiler();
     }
     runManualCompiler(brandName) {
-        this.manualCompiler.compile(brandName);
+        this.singleCompiler.compile(brandName);
+    }
+    runAutoCompile() {
+        this.autoCompiler.compile();
     }
 }

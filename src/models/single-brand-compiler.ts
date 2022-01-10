@@ -3,7 +3,7 @@ import Fetch from "./database-Fetch.js";
 import Insert from "./database-insert.js";
 import Modification from "./modification.js";
 
-export default class ManualCompiler{
+export default class SingleCompiler{
 
     private calculator;
     private fetch;
@@ -21,7 +21,6 @@ export default class ManualCompiler{
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
         await this.insert.insertCarsIntoDatabase(collectionsWithVariants);
-        // console.log(collectionsWithVariants[0]);
         return collectionsWithVariants;
     }
 

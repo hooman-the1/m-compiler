@@ -4,6 +4,7 @@ export default class Facade {
         this.state = new State();
     }
     autoCompile() {
+        this.state.runAutoCompile();
     }
     manualCompile(brandName) {
         this.state.runManualCompiler(brandName);

@@ -37,6 +37,7 @@ export default class Insert extends Database {
         await this.createEmptyCollections(connect.dbo, cars);
         await this.insertCars(connect.dbo, cars);
         connect === null || connect === void 0 ? void 0 : connect.client.close();
+        return;
     }
     async insertCars(dbo, cars) {
         for (let i = 0; i < cars.length; i++) {
@@ -47,11 +48,11 @@ export default class Insert extends Database {
     async insertCar(dbo, car) {
         try {
             await this.tryInsert(dbo, car);
+            return;
         }
         catch (err) {
             this.catch.aliveCatch(err, `some error in insert ${car.name} ${car.subName} record in ${car.collectionName} collection! see log file for more information`);
         }
-        return;
     }
     async tryInsert(dbo, car) {
         let brandName = car.collectionName.replace(/[0-9]/g, '');
@@ -73,6 +74,7 @@ export default class Insert extends Database {
     async clearCollection(dbo, collectionName) {
         try {
             await this.tryClearCollection(dbo, collectionName);
+            return;
         }
         catch (err) {
             this.catch.aliveCatch(err, `some error in clearing ${collectionName} collection in database! see log file for more information`);
@@ -80,6 +82,7 @@ export default class Insert extends Database {
     }
     async tryClearCollection(dbo, collectionName) {
         await dbo.collection(collectionName).deleteMany({});
+        return;
     }
     async createCollection(dbo, collectionName) {
         try {

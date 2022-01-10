@@ -6,6 +6,22 @@ export default class Fetch extends Database {
         this.variables = new Variables();
         this.adsDBName = this.variables.adsDBName;
     }
+    async getAllBrandNames() {
+        const allCollections = await this.getAllCollections();
+        const allBrands = this.extractBrandNamesFromCollections(allCollections);
+        return allBrands;
+    }
+    extractBrandNamesFromCollections(allCollections) {
+        let brandNames = [];
+        for (let i = 0; i < allCollections.length; i++) {
+            const collectionName = allCollections[i].namespace.replace(this.adsDBName + '.', '');
+            const brandName = collectionName.replace(/[0-9]/g, '');
+            if (!brandNames.includes(brandName)) {
+                brandNames.push(brandName);
+            }
+        }
+        return brandNames;
+    }
     async getBrandAds(brandName) {
         const brandCollections = await this.getBrandCollections(brandName);
         const ads = await this.getAds(brandCollections);
@@ -28,12 +44,16 @@ export default class Fetch extends Database {
         return ads;
     }
     async getBrandCollections(brandName) {
+        const allCollections = await this.getAllCollections();
+        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+        return brandCollections;
+    }
+    async getAllCollections() {
         const connect = await this.createConnect(this.adsDBName);
         await this.checkDatabase(this.adsDBName);
         const allCollections = await connect.dbo.collections();
-        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
         connect.client.close();
-        return brandCollections;
+        return allCollections;
     }
     async returnBrandCollectionsFromAllCollections(brandName, allCollections) {
         const brandCollections = [];

@@ -42,6 +42,7 @@ export default class Insert extends Database{
         await this.createEmptyCollections(connect!.dbo, cars);
         await this.insertCars(connect!.dbo, cars)
         connect?.client.close();
+        return;
     }
 
     private async insertCars(dbo: any, cars: Car[]){
@@ -54,10 +55,10 @@ export default class Insert extends Database{
     private async insertCar(dbo: any, car: Car){
         try{
             await this.tryInsert(dbo,car);
+            return;
         }catch(err: any){
             this.catch.aliveCatch(err, `some error in insert ${car.name} ${car.subName} record in ${car.collectionName} collection! see log file for more information`)
         }
-        return;
     }
 
     private async tryInsert(dbo: any, car: Car){
@@ -81,6 +82,7 @@ export default class Insert extends Database{
     private async clearCollection(dbo: any, collectionName: string): Promise<void>{
         try{
             await this.tryClearCollection(dbo, collectionName);
+            return;
         }catch(err: any){
             this.catch.aliveCatch(err, `some error in clearing ${collectionName} collection in database! see log file for more information`);
         }
@@ -88,6 +90,7 @@ export default class Insert extends Database{
 
     private async tryClearCollection(dbo: any, collectionName: string): Promise<void>{
         await dbo.collection(collectionName).deleteMany({});
+        return;
     }
 
     private async createCollection(dbo: any, collectionName: string): Promise<void | undefined>{
