@@ -1,10 +1,10 @@
 export default class Variables {
     constructor() {
         this.adsDBName = 'ads';
-        // adsDBName = 'ads';
         this.dbName = 'fch';
-        // dbName = 'fch';
-        this.mongoServer = 'mongodb://localhost:27017/';
+        this.mongoUser = 'compiler';
+        this.mongoPassword = 'compiler';
+        this.mongoServer = 'mongodb://' + this.mongoUser + ':' + this.mongoPassword + '@localhost:27017/';
         this.logFileLocation = '../logs/logs.txt';
         this.precisionDigits = 3;
         this.carsDBName = 'cars';

@@ -10,6 +10,7 @@ export default class AutoCompiler {
         for (let i = 0; i < brandNames.length; i++) {
             await this.singleCompiler.compile(brandNames[i]);
         }
-        return;
+        console.log("auto compile done!");
+        process.exit();
     }
 }

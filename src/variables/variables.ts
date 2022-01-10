@@ -1,10 +1,11 @@
 export default class Variables{
-    adsDBName = 'ads';
-    // adsDBName = 'ads';
-    dbName = 'fch';
-    // dbName = 'fch';
-    mongoServer = 'mongodb://localhost:27017/';
-    logFileLocation = '../logs/logs.txt';
-    precisionDigits = 3;
-    carsDBName = 'cars';
+    public adsDBName = 'ads';
+    public dbName = 'fch';
+    private mongoUser = 'compiler';
+    private mongoPassword = 'compiler';
+    public mongoServer: string = 'mongodb://' + this.mongoUser + ':' + this.mongoPassword + '@localhost:27017/';
+    public logFileLocation = '../logs/logs.txt';
+    public precisionDigits = 3;
+    public carsDBName = 'cars';
+
 }
