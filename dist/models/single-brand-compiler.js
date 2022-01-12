@@ -13,7 +13,8 @@ export default class SingleCompiler {
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
         await this.insert.insertCarsIntoDatabase(collectionsWithVariants);
-        return collectionsWithVariants;
+        console.log(`${brandName} compile done!`);
+        return;
     }
     removeAdsDetails(collections) {
         const resultCollections = [];

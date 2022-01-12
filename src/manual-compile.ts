@@ -1,6 +1,6 @@
 import Facade from './facade.js';
 
 const facade = new Facade();
-const carBrand = 'runna';
+const carBrand = 'quick';
 
-let a = facade.manualCompile(carBrand);
+facade.manualCompile(carBrand);

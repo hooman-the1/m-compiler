@@ -15,13 +15,14 @@ export default class SingleCompiler{
         this.insert = new Insert();
     }
     
-    async compile(brandName: string): Promise<Car[]>{
+    async compile(brandName: string): Promise<void>{
         let collections = await this.fetch.getBrandAds(brandName);
         collections = this.adVariant(collections);
         let collectionsWithVariants = this.calculator.addMinPrice(collections);
         collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
         await this.insert.insertCarsIntoDatabase(collectionsWithVariants);
-        return collectionsWithVariants;
+        console.log(`${brandName} compile done!`);
+        return; 
     }
 
     private removeAdsDetails(collections: any[]){

@@ -3,10 +3,12 @@ export default class Facade {
     constructor() {
         this.state = new State();
     }
-    autoCompile() {
-        this.state.runAutoCompile();
+    async autoCompile() {
+        await this.state.runAutoCompile();
+        process.exit();
     }
-    manualCompile(brandName) {
-        this.state.runManualCompiler(brandName);
+    async manualCompile(brandName) {
+        await this.state.runManualCompiler(brandName);
+        process.exit();
     }
 }

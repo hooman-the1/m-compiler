@@ -17,6 +17,5 @@ export default class AutoCompiler{
             await this.singleCompiler.compile(brandNames[i]);
         }
         console.log("auto compile done!");
-        process.exit();
     }
 }

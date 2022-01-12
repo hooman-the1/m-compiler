@@ -19,6 +19,12 @@ export default class Fetch extends Database{
         return allBrands;
     }
 
+    async getBrandAds(brandName: string): Promise<WithCategory[]>{
+        const brandCollections  = await this.getBrandCollections(brandName);
+        const ads = await this.getAds(brandCollections!);
+        return ads;
+    }
+
     private extractBrandNamesFromCollections(allCollections: any[]): string[]{
         let brandNames: string[] = [];
         for(let i = 0; i < allCollections.length; i++){
@@ -29,14 +35,6 @@ export default class Fetch extends Database{
             }
         }
         return brandNames;
-    }
-
-    
-
-    async getBrandAds(brandName: string): Promise<WithCategory[]>{
-        const brandCollections  = await this.getBrandCollections(brandName);
-        const ads = await this.getAds(brandCollections!);
-        return ads;
     }
 
     private async getAds(brandCollections: string[]): Promise<WithCategory[]>{

@@ -5,10 +5,10 @@ export default class State {
         this.singleCompiler = new SingleCompiler();
         this.autoCompiler = new AutoCompiler();
     }
-    runManualCompiler(brandName) {
-        this.singleCompiler.compile(brandName);
+    async runManualCompiler(brandName) {
+        await this.singleCompiler.compile(brandName);
     }
-    runAutoCompile() {
-        this.autoCompiler.compile();
+    async runAutoCompile() {
+        await this.autoCompiler.compile();
     }
 }

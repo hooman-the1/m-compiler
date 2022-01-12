@@ -11,11 +11,11 @@ export default class State{
         this.autoCompiler = new AutoCompiler();
     }
 
-    runManualCompiler(brandName: string){
-        this.singleCompiler.compile(brandName);
+    async runManualCompiler(brandName: string){
+        await this.singleCompiler.compile(brandName);
     }
 
-    runAutoCompile(){
-        this.autoCompiler.compile();
+    async runAutoCompile(){
+        await this.autoCompiler.compile();
     }
 }

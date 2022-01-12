@@ -5,7 +5,7 @@ export default class Insert extends Database{
 
     private carsSchema = {
         bsonType: "object", 
-        required: ["_id", "name", "subName", "collectionName", "variants"],
+        required: ["_id", "name", "subName", "collectionName", "variants", "isActive", "specs"],
         properties: {
             _id: {
                 bsonType: "objectId"
@@ -29,7 +29,15 @@ export default class Insert extends Database{
                 items: {
                     bsonType: "object"
                 }
-            } 
+            },
+            isActive: {
+                bsonType: "boolean",
+                description: "is car active for suggestion",
+            },
+            specs: {
+                bsonType: "object",
+                description: "car specifications that added by operator"
+            }
         }
     }
 
@@ -72,12 +80,15 @@ export default class Insert extends Database{
             const colExists = await (await dbo.listCollections().toArray()).findIndex((item: any) => item.name === brandName) !== -1;
             if(!colExists){
                 await this.createCollection(dbo, brandName);
-            }else{
+            }else{  //if brand name exist in db
                 await this.clearCollection(dbo, brandName);
+                // await this.insertToCollection(dbo, brandName);
             }
         }
         return;
     }
+
+    // private async insertToCollection(dbo: any, brandName)
 
     private async clearCollection(dbo: any, collectionName: string): Promise<void>{
         try{

@@ -11,6 +11,11 @@ export default class Fetch extends Database {
         const allBrands = this.extractBrandNamesFromCollections(allCollections);
         return allBrands;
     }
+    async getBrandAds(brandName) {
+        const brandCollections = await this.getBrandCollections(brandName);
+        const ads = await this.getAds(brandCollections);
+        return ads;
+    }
     extractBrandNamesFromCollections(allCollections) {
         let brandNames = [];
         for (let i = 0; i < allCollections.length; i++) {
@@ -21,11 +26,6 @@ export default class Fetch extends Database {
             }
         }
         return brandNames;
-    }
-    async getBrandAds(brandName) {
-        const brandCollections = await this.getBrandCollections(brandName);
-        const ads = await this.getAds(brandCollections);
-        return ads;
     }
     async getAds(brandCollections) {
         const connect = await this.createConnect(this.adsDBName);

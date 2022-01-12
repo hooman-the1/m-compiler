@@ -5,7 +5,6 @@ export default class Calculations {
         this.numberOfPrecisionDigits = this.variables.precisionDigits;
     }
     calculateMinPriceToSpecifiedPrecision(prices) {
-        // const pricesWithoutOutliers =  this.removeOutlierPrices(prices);
         let minValue = eval(prices.join('+')) / prices.length;
         minValue = Number(minValue.toPrecision(this.numberOfPrecisionDigits));
         return minValue;

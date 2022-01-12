@@ -8,11 +8,13 @@ export default class Facade{
         this.state = new State();
     }
 
-    autoCompile(){
-        this.state.runAutoCompile();
+    async autoCompile(){
+        await this.state.runAutoCompile();
+        process.exit();
     }
-
-    manualCompile(brandName: string){
-        this.state.runManualCompiler(brandName);
+    
+    async manualCompile(brandName: string){
+        await this.state.runManualCompiler(brandName);
+        process.exit();
     }
 }
