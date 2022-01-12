@@ -1,0 +1,16 @@
+
+error name : MongoServerError
+error message : Unknown type name alias: boolean
+error time : Wed Jan 12 2022 17:13:36 GMT+0330 (Iran Standard Time)
+error stack : MongoServerError: Unknown type name alias: boolean
+    at MessageStream.messageHandler (D:\fch\compiler\node_modules\mongodb\lib\cmap\connection.js:467:30)
+    at MessageStream.emit (node:events:390:28)
+    at processIncomingData (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:108:16)
+    at MessageStream._write (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:28:9)
+    at writeOrBuffer (node:internal/streams/writable:389:12)
+    at _write (node:internal/streams/writable:330:10)
+    at MessageStream.Writable.write (node:internal/streams/writable:334:10)
+    at Socket.ondata (node:internal/streams/readable:754:22)
+    at Socket.emit (node:events:390:28)
+    at addChunk (node:internal/streams/readable:315:12)
+------------------------

@@ -4,7 +4,7 @@ export default class Insert extends Database {
         super();
         this.carsSchema = {
             bsonType: "object",
-            required: ["_id", "name", "subName", "collectionName", "variants", "isActive", "specs"],
+            required: ["_id", "name", "subName", "collectionName", "variants" /* , "isActive", "specs" */],
             properties: {
                 _id: {
                     bsonType: "objectId"
@@ -29,14 +29,14 @@ export default class Insert extends Database {
                         bsonType: "object"
                     }
                 },
-                isActive: {
-                    bsonType: "boolean",
-                    description: "is car active for suggestion",
-                },
-                specs: {
-                    bsonType: "object",
-                    description: "car specifications that added by operator"
-                }
+                // isActive: {
+                //     bsonType: "boolean",
+                //     description: "is car active for suggestion",
+                // },
+                // specs: {
+                //     bsonType: "object",
+                //     description: "car specifications that added by operator"
+                // }
             }
         };
     }
