@@ -18,9 +18,9 @@ export default class SingleCompiler{
     async compile(brandName: string): Promise<void>{
         let collections = await this.fetch.getBrandAds(brandName);
         collections = this.adVariant(collections);
-        let collectionsWithVariants = this.calculator.addMinPrice(collections);
-        collectionsWithVariants = this.removeAdsDetails(collectionsWithVariants);
-        await this.insert.insertCarsIntoDatabase(collectionsWithVariants);
+        let brandCollectionsWithVariants = this.calculator.addMinPrice(collections);
+        brandCollectionsWithVariants = this.removeAdsDetails(brandCollectionsWithVariants);
+        await this.insert.insertCarsIntoDatabaseTmp(brandCollectionsWithVariants);
         console.log(`${brandName} compile done!`);
         return; 
     }

@@ -46,3 +46,5 @@ export interface Car{
     'subName': string,
     'variants': Variant[]
 } 
+
+export type InsertActionScenaio = 'No Collection' | 'No Document' | 'No Variant'| 'Update'  
