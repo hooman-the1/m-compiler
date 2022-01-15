@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import Database from "./databse.js";
 import DateHandler from "./date.js";
 export default class Insert extends Database {
@@ -5,7 +6,7 @@ export default class Insert extends Database {
         super();
         this.carsSchema = {
             bsonType: "object",
-            required: ["_id", "name", "subName", "collectionName", "variants", "lastUpdate", "isActive", "specs"],
+            required: ["_id", "name", "subName", "collectionName", "variants", "lastUpdate", "isActive"],
             properties: {
                 _id: {
                     bsonType: "objectId"
@@ -38,8 +39,8 @@ export default class Insert extends Database {
                     bsonType: "bool",
                     description: "is car active for suggestion",
                 },
-                specs: {
-                    bsonType: "string",
+                specsId: {
+                    bsonType: "objectId",
                     description: "car specifications that added by operator"
                 }
             }
@@ -93,10 +94,10 @@ export default class Insert extends Database {
         const brandName = car.collectionName.replace(/[0-9]/g, '');
         const lastUpdate = this.date.getCurrentGDate();
         const isActive = false;
-        const specs = 'test';
+        const specs = new ObjectId('61e2bb2edbd8d62d05eeaab4');
         car['lastUpdate'] = lastUpdate;
         car['isActive'] = isActive;
-        car['specs'] = specs;
+        // (car as any)['specs'] = specs;
         // console.log(car);
         await dbo.collection(brandName).insertOne(car);
     }

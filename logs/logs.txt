@@ -1,7 +1,67 @@
 
 error name : MongoServerError
 error message : Document failed validation
-error time : Sat Jan 15 2022 15:10:20 GMT+0330 (Iran Standard Time)
+error time : Sat Jan 15 2022 15:47:58 GMT+0330 (Iran Standard Time)
+error stack : MongoServerError: Document failed validation
+    at D:\fch\compiler\node_modules\mongodb\lib\operations\insert.js:51:33
+    at D:\fch\compiler\node_modules\mongodb\lib\cmap\connection_pool.js:272:25
+    at handleOperationResult (D:\fch\compiler\node_modules\mongodb\lib\sdam\server.js:370:9)
+    at MessageStream.messageHandler (D:\fch\compiler\node_modules\mongodb\lib\cmap\connection.js:479:9)
+    at MessageStream.emit (node:events:390:28)
+    at processIncomingData (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:108:16)
+    at MessageStream._write (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:28:9)
+    at writeOrBuffer (node:internal/streams/writable:389:12)
+    at _write (node:internal/streams/writable:330:10)
+    at MessageStream.Writable.write (node:internal/streams/writable:334:10)
+------------------------
+error name : MongoServerError
+error message : Document failed validation
+error time : Sat Jan 15 2022 15:47:58 GMT+0330 (Iran Standard Time)
+error stack : MongoServerError: Document failed validation
+    at D:\fch\compiler\node_modules\mongodb\lib\operations\insert.js:51:33
+    at D:\fch\compiler\node_modules\mongodb\lib\cmap\connection_pool.js:272:25
+    at handleOperationResult (D:\fch\compiler\node_modules\mongodb\lib\sdam\server.js:370:9)
+    at MessageStream.messageHandler (D:\fch\compiler\node_modules\mongodb\lib\cmap\connection.js:479:9)
+    at MessageStream.emit (node:events:390:28)
+    at processIncomingData (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:108:16)
+    at MessageStream._write (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:28:9)
+    at writeOrBuffer (node:internal/streams/writable:389:12)
+    at _write (node:internal/streams/writable:330:10)
+    at MessageStream.Writable.write (node:internal/streams/writable:334:10)
+------------------------
+error name : MongoServerError
+error message : Document failed validation
+error time : Sat Jan 15 2022 15:47:58 GMT+0330 (Iran Standard Time)
+error stack : MongoServerError: Document failed validation
+    at D:\fch\compiler\node_modules\mongodb\lib\operations\insert.js:51:33
+    at D:\fch\compiler\node_modules\mongodb\lib\cmap\connection_pool.js:272:25
+    at handleOperationResult (D:\fch\compiler\node_modules\mongodb\lib\sdam\server.js:370:9)
+    at MessageStream.messageHandler (D:\fch\compiler\node_modules\mongodb\lib\cmap\connection.js:479:9)
+    at MessageStream.emit (node:events:390:28)
+    at processIncomingData (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:108:16)
+    at MessageStream._write (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:28:9)
+    at writeOrBuffer (node:internal/streams/writable:389:12)
+    at _write (node:internal/streams/writable:330:10)
+    at MessageStream.Writable.write (node:internal/streams/writable:334:10)
+------------------------
+error name : MongoServerError
+error message : Document failed validation
+error time : Sat Jan 15 2022 15:47:58 GMT+0330 (Iran Standard Time)
+error stack : MongoServerError: Document failed validation
+    at D:\fch\compiler\node_modules\mongodb\lib\operations\insert.js:51:33
+    at D:\fch\compiler\node_modules\mongodb\lib\cmap\connection_pool.js:272:25
+    at handleOperationResult (D:\fch\compiler\node_modules\mongodb\lib\sdam\server.js:370:9)
+    at MessageStream.messageHandler (D:\fch\compiler\node_modules\mongodb\lib\cmap\connection.js:479:9)
+    at MessageStream.emit (node:events:390:28)
+    at processIncomingData (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:108:16)
+    at MessageStream._write (D:\fch\compiler\node_modules\mongodb\lib\cmap\message_stream.js:28:9)
+    at writeOrBuffer (node:internal/streams/writable:389:12)
+    at _write (node:internal/streams/writable:330:10)
+    at MessageStream.Writable.write (node:internal/streams/writable:334:10)
+------------------------
+error name : MongoServerError
+error message : Document failed validation
+error time : Sat Jan 15 2022 15:47:58 GMT+0330 (Iran Standard Time)
 error stack : MongoServerError: Document failed validation
     at D:\fch\compiler\node_modules\mongodb\lib\operations\insert.js:51:33
     at D:\fch\compiler\node_modules\mongodb\lib\cmap\connection_pool.js:272:25
