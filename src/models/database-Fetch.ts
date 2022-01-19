@@ -19,10 +19,12 @@ export default class Fetch extends Database{
         return allBrands;
     }
 
-    async getBrandAds(brandName: string): Promise<WithCategory[]>{
-        const brandCollections  = await this.getBrandCollections(brandName);
-        const ads = await this.getAds(brandCollections!);
-        return ads;
+    private async getAllCollections(){
+        const connect = await this.createConnect(this.adsDBName);
+        await this.checkDatabase(this.adsDBName);
+        const allCollections: any[] = await connect!.dbo.collections();
+        connect!.client.close();
+        return allCollections;
     }
 
     private extractBrandNamesFromCollections(allCollections: any[]): string[]{
@@ -35,6 +37,18 @@ export default class Fetch extends Database{
             }
         }
         return brandNames;
+    }
+
+    async getBrandAds(brandName: string): Promise<WithCategory[]>{
+        const brandCollections  = await this.getBrandCollections(brandName);
+        const ads = await this.getAds(brandCollections!);
+        return ads;
+    }
+
+    private async getBrandCollections(brandName: string): Promise<string[] | undefined>{
+        const allCollections = await this.getAllCollections();
+        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+        return brandCollections;
     }
 
     private async getAds(brandCollections: string[]): Promise<WithCategory[]>{
@@ -54,21 +68,7 @@ export default class Fetch extends Database{
         connect!.client.close();
         return ads;
     }
-
-    private async getBrandCollections(brandName: string): Promise<string[] | undefined>{
-            const allCollections = await this.getAllCollections();
-            const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
-            return brandCollections;
-    }
-
-    private async getAllCollections(){
-        const connect = await this.createConnect(this.adsDBName);
-        await this.checkDatabase(this.adsDBName);
-        const allCollections: any[] = await connect!.dbo.collections();
-        connect!.client.close();
-        return allCollections;
-    }
-
+    
     private async returnBrandCollectionsFromAllCollections(brandName: string, allCollections: any[]): Promise<string[]>{
         const brandCollections: string[] = [];
         for(let i = 0; i < allCollections.length; i ++){
@@ -79,5 +79,5 @@ export default class Fetch extends Database{
         }
         return brandCollections;
     }
-
+    
 }

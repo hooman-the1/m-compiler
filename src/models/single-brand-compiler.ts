@@ -25,15 +25,6 @@ export default class SingleCompiler{
         return; 
     }
 
-    private removeAdsDetails(collections: any[]){
-        const resultCollections: any[] = []
-        collections.forEach(collection => {
-            delete collection.ads;
-            resultCollections.push(collection);
-        });
-        return resultCollections;
-    }
-
     private adVariant(brandAds: WithCategory[]){
         const compiledBrandAds: any[] = []
         brandAds.forEach((subAds: WithCategory) => {
@@ -44,7 +35,14 @@ export default class SingleCompiler{
         return compiledBrandAds;
     }
 
-    
+    private removeAdsDetails(collections: any[]){
+        const resultCollections: any[] = []
+        collections.forEach(collection => {
+            delete collection.ads;
+            resultCollections.push(collection);
+        });
+        return resultCollections;
+    }
 
     private adProdYearVariant(subAds: WithCategory){
         const prodYears = this.extractProdYear(subAds);
@@ -62,6 +60,15 @@ export default class SingleCompiler{
         });
     }
     
+    private extractPricesOfEachYear(subAds: adFetch[], prodYears: string[]){
+        let variants: any[] = [];
+        prodYears.forEach((prodYear: string) => {
+            const variant = this.pricesOfEachYearToVariant(subAds, prodYear);
+            variants.push(variant);
+        });
+        return variants;
+    }
+
     private pricesOfEachYearToVariant(subAds: adFetch[], prodYear: string){
         const prices: number[] = [];
         subAds.forEach((ad: adFetch) => {
@@ -73,16 +80,5 @@ export default class SingleCompiler{
             'prodYear': prodYear,
             'prices': prices
         })
-    }
-
-    private extractPricesOfEachYear(subAds: adFetch[], prodYears: string[]){
-        let variants: any[] = [];
-        prodYears.forEach((prodYear: string) => {
-            const variant = this.pricesOfEachYearToVariant(subAds, prodYear);
-            variants.push(variant);
-        });
-        return variants;
-    }
-
-    
+    }    
 } 

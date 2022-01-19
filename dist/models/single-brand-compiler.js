@@ -16,14 +16,6 @@ export default class SingleCompiler {
         console.log(`${brandName} compile done!`);
         return;
     }
-    removeAdsDetails(collections) {
-        const resultCollections = [];
-        collections.forEach(collection => {
-            delete collection.ads;
-            resultCollections.push(collection);
-        });
-        return resultCollections;
-    }
     adVariant(brandAds) {
         const compiledBrandAds = [];
         brandAds.forEach((subAds) => {
@@ -32,6 +24,14 @@ export default class SingleCompiler {
             compiledBrandAds.push(subAds);
         });
         return compiledBrandAds;
+    }
+    removeAdsDetails(collections) {
+        const resultCollections = [];
+        collections.forEach(collection => {
+            delete collection.ads;
+            resultCollections.push(collection);
+        });
+        return resultCollections;
     }
     adProdYearVariant(subAds) {
         const prodYears = this.extractProdYear(subAds);
@@ -47,6 +47,14 @@ export default class SingleCompiler {
             return array.indexOf(value) === index;
         });
     }
+    extractPricesOfEachYear(subAds, prodYears) {
+        let variants = [];
+        prodYears.forEach((prodYear) => {
+            const variant = this.pricesOfEachYearToVariant(subAds, prodYear);
+            variants.push(variant);
+        });
+        return variants;
+    }
     pricesOfEachYearToVariant(subAds, prodYear) {
         const prices = [];
         subAds.forEach((ad) => {
@@ -58,13 +66,5 @@ export default class SingleCompiler {
             'prodYear': prodYear,
             'prices': prices
         });
-    }
-    extractPricesOfEachYear(subAds, prodYears) {
-        let variants = [];
-        prodYears.forEach((prodYear) => {
-            const variant = this.pricesOfEachYearToVariant(subAds, prodYear);
-            variants.push(variant);
-        });
-        return variants;
     }
 }

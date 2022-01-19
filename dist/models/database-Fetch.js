@@ -11,10 +11,12 @@ export default class Fetch extends Database {
         const allBrands = this.extractBrandNamesFromCollections(allCollections);
         return allBrands;
     }
-    async getBrandAds(brandName) {
-        const brandCollections = await this.getBrandCollections(brandName);
-        const ads = await this.getAds(brandCollections);
-        return ads;
+    async getAllCollections() {
+        const connect = await this.createConnect(this.adsDBName);
+        await this.checkDatabase(this.adsDBName);
+        const allCollections = await connect.dbo.collections();
+        connect.client.close();
+        return allCollections;
     }
     extractBrandNamesFromCollections(allCollections) {
         let brandNames = [];
@@ -26,6 +28,16 @@ export default class Fetch extends Database {
             }
         }
         return brandNames;
+    }
+    async getBrandAds(brandName) {
+        const brandCollections = await this.getBrandCollections(brandName);
+        const ads = await this.getAds(brandCollections);
+        return ads;
+    }
+    async getBrandCollections(brandName) {
+        const allCollections = await this.getAllCollections();
+        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
+        return brandCollections;
     }
     async getAds(brandCollections) {
         const connect = await this.createConnect(this.adsDBName);
@@ -42,18 +54,6 @@ export default class Fetch extends Database {
         }
         connect.client.close();
         return ads;
-    }
-    async getBrandCollections(brandName) {
-        const allCollections = await this.getAllCollections();
-        const brandCollections = await this.returnBrandCollectionsFromAllCollections(brandName, allCollections);
-        return brandCollections;
-    }
-    async getAllCollections() {
-        const connect = await this.createConnect(this.adsDBName);
-        await this.checkDatabase(this.adsDBName);
-        const allCollections = await connect.dbo.collections();
-        connect.client.close();
-        return allCollections;
     }
     async returnBrandCollectionsFromAllCollections(brandName, allCollections) {
         const brandCollections = [];

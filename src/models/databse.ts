@@ -33,8 +33,6 @@ export default class Database{
         return mongoClient;
     }
 
-    
-
     protected async createConnect(dbName: string): Promise<initDBConnect | undefined>{
         try{
             return await this.tryCreateConnect(dbName);
@@ -42,7 +40,7 @@ export default class Database{
             this.catch.deadCatch(err, 'some error in getting access to Database! see log file for more information')
         }
     }
-
+    
     private async tryCreateConnect(dbName: string): Promise<initDBConnect>{
         const mongoClient = await this.createClient(dbName);
         const dbo = mongoClient!.db(dbName);
@@ -70,4 +68,6 @@ export default class Database{
     }
 
 
+
+ 
 }
